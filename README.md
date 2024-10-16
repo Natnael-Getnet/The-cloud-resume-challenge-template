@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cloud Resume Challenge – Deployment Guide
+This project is part of the Cloud Resume Challenge, demonstrating how to host a static website on AWS S3 with CloudFront for content delivery. The deployment logic is handled by `deploy.xml` using GitHub Actions to automate builds, uploads, and cache invalidations.
 
-## Getting Started
+## 📋 Overview
 
-First, run the development server:
+The `deploy.xml` file contains the logic to:
+- **Build** the project.
+- **Upload** the files to the S3 bucket.
+- **Invalidate** the **CloudFront distribution** cache to ensure new changes are reflected.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Prerequisites
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ensure you have the following set up:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **AWS S3 Bucket** – Used to host the static website.
+2. **CloudFront Distribution** – Acts as a CDN for optimized content delivery.
+3. **AWS IAM User** – Requires programmatic access with permissions to access S3 and CloudFront.
+4. **GitHub Repository** – Hosting the project for version control and CI/CD.
+   
+## 🔑 GitHub Secrets & Variables Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To allow GitHub Actions to access AWS resources, configure the following secrets in your repository:
 
-## Learn More
+1. Navigate to:
+   - Settings → Secrets and Variables → Actions.
+2. Add the following secrets:
+   - `AWS_ACCESS_KEY_ID` – Your AWS access key ID.
+   - `AWS_SECRET_ACCESS_KEY` – Your AWS secret access key.
+   - `CLOUDFRONT_DISTRIBUTION_ID` – The CloudFront distribution ID for cache invalidation.
+     
+## ⚙️ GitHub Actions Workflow Overview
 
-To learn more about Next.js, take a look at the following resources:
+With a proper workflow, the following tasks will be automated through GitHub Actions:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Checkout** the code from the repository.
+2. **Install dependencies** (if needed).
+3. **Build** the project.
+4. **Sync files** with the **S3 bucket**.
+5. **Invalidate** the CloudFront distribution cache to ensure updates are reflected immediately.
+Ensure the required secrets are correctly configured to avoid deployment failures.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Troubleshooting
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Permissions Issues:** Make sure the IAM user has access to S3 and CloudFront.
+- **Cache Invalidation Delays:** CloudFront invalidations may take a few minutes to propagate.
+- **GitHub Actions Failures:** Check the Actions logs for errors and verify that secrets are properly configured.
